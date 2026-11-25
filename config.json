@@ -24,5 +24,6 @@
     }
   ],
   "ntfy_topic": "",
-  "notes": "Set enabled to false to stop the bot (kill switch). Rules (Kayden, Nov 24): buy at 75c+, 5 min or less left, safe distance from target (2x a normal move), 2 losses in a row = 1 hour pause, sit out big news. Bet size $20. No real-chance-vs-price check and no daily stop (set min_edge 0 / daily_loss_limit 30 to turn them back on). All times UTC."
+  "notes": "Set enabled to false to stop the bot (kill switch). Rules (Kayden, Nov 24): buy at 75c+, 5 min or less left, safe distance from target (2x a normal move), 2 losses in a row = 1 hour pause, sit out big news. Bet size $20. No real-chance-vs-price check and no daily stop (set min_edge 0 / daily_loss_limit 30 to turn them back on). All times UTC. bet_fraction 0.5 = bet half the account each time (0 = use max_bet).",
+  "bet_fraction": 0.5
 }

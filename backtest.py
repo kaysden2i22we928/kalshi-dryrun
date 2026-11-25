@@ -150,7 +150,8 @@ def run(days, cfg):
             if abs(z) < cfg["min_safety_sigmas"]:
                 last_reason = "too close to target"
                 continue
-            stake = min(cfg["max_bet"], bank)
+            frac = cfg.get("bet_fraction") or 0
+            stake = bank * frac if frac > 0 else min(cfg["max_bet"], bank)
             n = int(stake // ask)
             if n < 1:
                 last_reason = "bankroll too low"
@@ -187,7 +188,18 @@ def run(days, cfg):
     eq, peak, dd = cfg["start_bankroll"], cfg["start_bankroll"], 0
     for x in trades:
         eq += x["pl"]; peak = max(peak, eq); dd = max(dd, peak - eq)
-    return {"ran": bot.iso(end), "days": days, "from": bot.iso(start), "to": bot.iso(end),
+    def resize(frac):
+        b, peak, worst_dd, lo = float(cfg["start_bankroll"]), float(cfg["start_bankroll"]), 0.0, float(cfg["start_bankroll"])
+        for x in trades:
+            n = int((b * frac if frac > 0 else min(cfg["max_bet"], b)) // x["price"])
+            if n < 1:
+                break
+            cost = n * x["price"] + bot.kalshi_fee(n, x["price"])
+            b = round(b + ((n if x["result"] == "win" else 0) - cost), 2)
+            peak = max(peak, b); worst_dd = max(worst_dd, peak - b); lo = min(lo, b)
+        return {"end_bankroll": round(b, 2), "max_drop": round(worst_dd, 2), "lowest": round(lo, 2)}
+    compare = {"flat_20": resize(0), "half_account": resize(0.5)}
+    return {"compare": compare, "ran": bot.iso(end), "days": days, "from": bot.iso(start), "to": bot.iso(end),
             "windows": len(events), "trades": trades, "skips": skips,
             "summary": {"bets": len(trades), "wins": w, "losses": len(trades) - w, "profit": pl,
                         "end_bankroll": round(cfg["start_bankroll"] + pl, 2),

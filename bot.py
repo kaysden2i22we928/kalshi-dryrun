@@ -204,7 +204,8 @@ def evaluate(st, cfg, series, t):
     if err:
         return dict(d, action="skip", reason=err)
     p = mod["p_yes"] if side == "yes" else 1 - mod["p_yes"]
-    stake = min(cfg["max_bet"], st["bankroll"])
+    frac = cfg.get("bet_fraction") or 0
+    stake = st["bankroll"] * frac if frac > 0 else min(cfg["max_bet"], st["bankroll"])
     contracts = int(stake // ask)
     if contracts < 1:
         return dict(d, action="skip", reason="bankroll too low")
