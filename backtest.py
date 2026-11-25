@@ -2,7 +2,7 @@
 """Backtest: would the rules have made money over the last N days?
 
 Replays every settled Kalshi 15-minute BTC and gold market from the last N days.
-At 2 minutes and 1 minute before each close it reads Kalshi's real ask prices
+Each minute in the last max_minutes_left minutes before each close it reads Kalshi's real ask prices
 (1-minute candles) and the real BTC / PAXG price, applies the same rules as
 bot.py, and settles with Kalshi's official result. Pretend $150, no real orders.
 
@@ -100,7 +100,7 @@ def run(days, cfg):
             skips[reason] = skips.get(reason, 0) + 1
             continue
         try:
-            km = kalshi_minutes(s, m["ticker"], close - timedelta(minutes=4), close)
+            km = kalshi_minutes(s, m["ticker"], close - timedelta(minutes=int(cfg['max_minutes_left']) + 2), close)
         except Exception:
             skips["no Kalshi price history"] = skips.get("no Kalshi price history", 0) + 1
             continue
@@ -109,7 +109,7 @@ def run(days, cfg):
         o = int(t_open.timestamp())
         fo = feed.get(o - 60) or feed.get(o)
         placed, last_reason = None, "no side at %dc+" % int(cfg["min_price"] * 100)
-        for mins_left in (2, 1):
+        for mins_left in range(int(cfg['max_minutes_left']), 0, -1):
             t = close - timedelta(minutes=mins_left)
             ts = int(t.timestamp())
             ya, yb = km.get(ts, (None, None))
