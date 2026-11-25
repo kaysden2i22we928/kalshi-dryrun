@@ -1,17 +1,80 @@
 {
  "started": "2026-11-25T06:15:40Z",
  "start_bankroll": 150,
- "bankroll": 150,
- "trades": [],
- "decisions": [],
- "skips": {},
+ "bankroll": 74.86,
+ "trades": [
+  {
+   "id": "KXBTC15M-26NOV250145-45-yes",
+   "ticker": "KXBTC15M-26NOV250145-45",
+   "series": "KXBTC15M",
+   "side": "yes",
+   "price": 0.974,
+   "contracts": 77,
+   "fee": 0.14,
+   "cost": 75.14,
+   "p": 0.9949,
+   "edge": 0.0191,
+   "safety": 2.57,
+   "strike": 58939.27,
+   "opened": "2026-11-25T06:41:46Z",
+   "close_time": "2026-11-25T06:45:00Z",
+   "mins_left": 3.23,
+   "settled": null,
+   "result": null,
+   "pl": 0.0
+  }
+ ],
+ "decisions": [
+  {
+   "t": "2026-11-25T06:41:46Z",
+   "series": "KXBTC15M",
+   "ticker": "KXBTC15M-26NOV250145-45",
+   "mins_left": 3.23,
+   "yes_ask": 0.974,
+   "no_ask": 0.027,
+   "side": "yes",
+   "ask": 0.974,
+   "p": 0.9949,
+   "edge": 0.0191,
+   "safety": 2.57,
+   "jump": 0.35,
+   "strike": 58939.27,
+   "est": 59083.76,
+   "action": "bet",
+   "reason": "77 contracts, cost $75.14"
+  },
+  {
+   "t": "2026-11-25T06:42:46Z",
+   "series": "KXGOLD15M",
+   "ticker": "KXGOLD15M-26NOV250145-45",
+   "mins_left": 2.22,
+   "yes_ask": 0.021,
+   "no_ask": 0.98,
+   "side": "no",
+   "ask": 0.98,
+   "p": 0.8049,
+   "edge": -0.1767,
+   "safety": 0.86,
+   "jump": 0.44,
+   "strike": 3526.01,
+   "est": 3523.03,
+   "action": "skip",
+   "reason": "too close to target"
+  }
+ ],
+ "skips": {
+  "KXBTC15M-26NOV250145-45": "bet",
+  "KXGOLD15M-26NOV250145-45": "too close to target"
+ },
  "windows_seen": [
   "KXBTC15M-26NOV250130-30",
-  "KXGOLD15M-26NOV250130-30"
+  "KXGOLD15M-26NOV250130-30",
+  "KXBTC15M-26NOV250145-45",
+  "KXGOLD15M-26NOV250145-45"
  ],
  "pause_until": null,
  "status": "running",
- "last_run": "2026-11-25T06:24:31Z",
+ "last_run": "2026-11-25T06:42:46Z",
  "errors": [],
  "config": {
   "enabled": true,
@@ -22,13 +85,13 @@
   ],
   "start_bankroll": 150,
   "max_bet": 20,
-  "min_price": 0.92,
-  "max_price": 0.97,
-  "max_minutes_left": 2,
-  "min_edge": 0.0,
+  "min_price": 0.75,
+  "max_price": 0.99,
+  "max_minutes_left": 5,
+  "min_edge": -1.0,
   "min_safety_sigmas": 2.0,
   "max_jump_sigmas": 3.0,
-  "daily_loss_limit": 30,
+  "daily_loss_limit": 100000,
   "losing_streak_pause": 2,
   "pause_minutes": 60,
   "news_blackouts_utc": [
@@ -38,6 +101,7 @@
     "why": "Example: US jobs report 8:30 ET. Edit or add your own."
    }
   ],
-  "ntfy_topic": ""
+  "ntfy_topic": "",
+  "bet_fraction": 0.5
  }
 }
