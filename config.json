@@ -1,21 +1,28 @@
 {
   "enabled": true,
   "dry_run": true,
-  "series": ["KXBTC15M", "KXGOLD15M"],
+  "series": [
+    "KXBTC15M",
+    "KXGOLD15M"
+  ],
   "start_bankroll": 150,
   "max_bet": 20,
-  "min_price": 0.92,
-  "max_price": 0.97,
-  "max_minutes_left": 2,
-  "min_edge": 0.0,
+  "min_price": 0.75,
+  "max_price": 0.99,
+  "max_minutes_left": 5,
+  "min_edge": -1.0,
   "min_safety_sigmas": 2.0,
   "max_jump_sigmas": 3.0,
-  "daily_loss_limit": 30,
+  "daily_loss_limit": 100000,
   "losing_streak_pause": 2,
   "pause_minutes": 60,
   "news_blackouts_utc": [
-    {"start": "2026-12-04T13:15", "end": "2026-12-04T14:00", "why": "Example: US jobs report 8:30 ET. Edit or add your own."}
+    {
+      "start": "2026-12-04T13:15",
+      "end": "2026-12-04T14:00",
+      "why": "Example: US jobs report 8:30 ET. Edit or add your own."
+    }
   ],
   "ntfy_topic": "",
-  "notes": "Set enabled to false to stop the bot (kill switch). All times UTC. Prices are dollars per contract (0.92 = 92 cents)."
+  "notes": "Set enabled to false to stop the bot (kill switch). Rules (Kayden, Nov 24): buy at 75c+, 5 min or less left, safe distance from target (2x a normal move), 2 losses in a row = 1 hour pause, sit out big news. Bet size $20. No real-chance-vs-price check and no daily stop (set min_edge 0 / daily_loss_limit 30 to turn them back on). All times UTC."
 }
