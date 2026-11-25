@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: dryrun-bot
+  group: backtest
   cancel-in-progress: false
 
 jobs:
