@@ -1,0 +1,21 @@
+{
+  "enabled": true,
+  "dry_run": true,
+  "series": ["KXBTC15M", "KXGOLD15M"],
+  "start_bankroll": 150,
+  "max_bet": 20,
+  "min_price": 0.92,
+  "max_price": 0.97,
+  "max_minutes_left": 2,
+  "min_edge": 0.0,
+  "min_safety_sigmas": 2.0,
+  "max_jump_sigmas": 3.0,
+  "daily_loss_limit": 30,
+  "losing_streak_pause": 2,
+  "pause_minutes": 60,
+  "news_blackouts_utc": [
+    {"start": "2026-12-04T13:15", "end": "2026-12-04T14:00", "why": "Example: US jobs report 8:30 ET. Edit or add your own."}
+  ],
+  "ntfy_topic": "",
+  "notes": "Set enabled to false to stop the bot (kill switch). All times UTC. Prices are dollars per contract (0.92 = 92 cents)."
+}

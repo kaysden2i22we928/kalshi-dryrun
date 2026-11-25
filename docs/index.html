@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dry-Run Bot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: a trading desk's week-end report card, plain and exact.
+IDEA: a pretend $150 account statement with a pass/fail verdict.
+PICTURE: bankroll line against the $150 starting line.
+COLOUR and TYPE: white, ink #101418, yellow slab on the verdict, slate; Manrope.
+LAYOUT: verdict + bankroll chart first, then checklist, skips, trades.
+*/
+:root{color-scheme:light dark;--bg:light-dark(#fff,#101418);--ink:light-dark(#101418,#eef1f4);--mute:light-dark(#5b6670,#9aa6b1);--line:light-dark(#e3e6ea,#26303a);--card:light-dark(#f6f7f9,#161c23);--y:#ffd84a;--up:light-dark(#0f7a43,#3ccf82);--dn:light-dark(#c2272d,#ff6b6b)}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(20px,4vw,44px) max(5vw,16px);max-width:1240px;margin:0 auto}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.05;margin:0 0 6px;text-wrap:balance}
+h2{font-size:22px;margin:0 0 12px}
+.note{color:var(--mute);font-size:14px;margin:0}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:24px;margin-top:18px}
+.slab{background:var(--y);color:#101418;border-radius:6px;padding:18px}
+.big{font-size:clamp(34px,6vw,52px);font-weight:800;line-height:1;white-space:nowrap}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.kv div{font-size:13px}.kv b{display:block;font-size:19px;white-space:nowrap}
+.up{color:var(--up)}.dn{color:var(--dn)}.slab .up{color:#0b5e33}.slab .dn{color:#9c1a1f}
+.fig{position:relative;min-height:300px}.fig svg{position:absolute;inset:0;width:100%;height:100%;color:var(--ink)}
+.card{background:var(--card);border-radius:6px;padding:18px}
+.chk{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:15px}
+.rowb{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) 44px;gap:8px;align-items:center;font-size:14px;min-height:30px}
+.bar{height:12px;background:var(--line);border-radius:2px;position:relative}.bar i{position:absolute;inset:0 auto 0 0;background:var(--ink);border-radius:2px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{font-size:13px;color:var(--mute);font-weight:600;text-align:left;border-bottom:1px solid var(--line);padding:8px 6px}
+td{border-bottom:1px solid var(--line);padding:8px 6px}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:13px;font-weight:700;background:var(--card)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+button{font:inherit;font-weight:700;min-height:36px;padding:4px 12px;border-radius:4px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr)) minmax(0,1.1fr);gap:4px;margin-top:10px}
+.cal .h{font-size:12px;color:var(--mute);text-align:center;padding:2px 0}
+.cal .d{border-radius:4px;background:var(--card);min-height:62px;padding:4px 5px;font-size:11px;line-height:1.25;display:flex;flex-direction:column;gap:2px}
+.cal .d.o{opacity:.35}.cal .d.t{outline:2px solid var(--ink)}
+.cal .d b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:clip}.cal .d{overflow:hidden}.cal .d .n{color:var(--mute)}
+.cal .wk{background:transparent;border:1px solid var(--line)}
+.calhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.calhead h2{margin:0;flex:1 1 auto}
+.calsum{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;margin-top:8px}
+@media(max-width:480px){.cal .d{min-height:54px;padding:3px}.cal .d b{font-size:11px}.cal .d .n{display:none}}
+@media(max-width:760px){.grid,.two{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;color:var(--mute)}.stack td:empty{display:none}}
+</style>
+</head>
+<body>
+<div id="app"><section class="band"><h1>Dry-run bot</h1><p class="note">Loading results…</p></section></div>
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>(n<0?'−$':'$')+Math.abs(n).toFixed(2);
+const sm=n=>(n>=0?'+':'')+money(n);
+const NAME={KXBTC15M:'BTC',KXGOLD15M:'Gold'};
+const local=s=>s?new Date(s).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'—';
+let D=null,B=null;
+/* ---- P&L calendar ---- */
+let calOff=0;
+function calHTML(items){
+  const fm=n=>(n<0?'−$':'+$')+Math.abs(n).toFixed(Math.abs(n)>=100?0:2);
+  const fc=n=>(n<0?'−':'+')+'$'+(Math.abs(n)>=10?Math.round(Math.abs(n)):Math.abs(n).toFixed(1));
+  const key=d=>d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+  const day={};for(const it of items){const k=key(it.d);const x=day[k]||(day[k]={pl:0,w:0,l:0});x.pl+=it.pl;it.win?x.w++:x.l++}
+  const base=new Date();base.setDate(1);base.setMonth(base.getMonth()+calOff);
+  const y=base.getFullYear(),m=base.getMonth(),first=new Date(y,m,1),start=new Date(y,m,1-first.getDay());
+  const mx=Math.max(1,...Object.values(day).map(x=>Math.abs(x.pl)));
+  const today=key(new Date());
+  let cells='',mpl=0,gd=0,rd=0,best=null,worst=null;
+  for(let w=0;w<6;w++){
+    let wpl=0,wn=0;
+    for(let i=0;i<7;i++){
+      const d=new Date(start);d.setDate(start.getDate()+w*7+i);
+      const x=day[key(d)],inM=d.getMonth()===m;
+      let bg='';
+      if(x){const a=(0.18+0.55*Math.min(1,Math.abs(x.pl)/mx)).toFixed(2);bg=`background:${x.pl>=0?`rgba(15,160,80,${a})`:`rgba(210,40,45,${a})`}`;
+        if(inM){mpl+=x.pl;x.pl>=0?gd++:rd++;if(!best||x.pl>best.pl)best={pl:x.pl,d};if(!worst||x.pl<worst.pl)worst={pl:x.pl,d}}wpl+=inM?x.pl:0;wn+=inM?x.w+x.l:0}
+      cells+=`<div class="d${inM?'':' o'}${key(d)===today?' t':''}" style="${bg}"><span>${d.getDate()}</span>${x?`<b>${fc(x.pl)}</b><span class="n">${x.w}W ${x.l}L</span>`:''}</div>`;
+    }
+    cells+=`<div class="d wk"><span class="n" style="display:block">Week</span>${wn?`<b class="${wpl>=0?'up':'dn'}">${fc(wpl)}</b>`:''}</div>`;
+    const nd=new Date(start);nd.setDate(start.getDate()+(w+1)*7);if(nd.getMonth()!==m&&w>=3)break;
+  }
+  const md=d=>d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  return `<div class="calhead"><h2>${base.toLocaleDateString('en-US',{month:'long',year:'numeric'})}</h2><button class="sm ghost cal-nav" data-cal="-1" aria-label="Previous month">‹</button><button class="sm ghost cal-nav" data-cal="1" aria-label="Next month">›</button></div>
+  <div class="calsum"><span>Month <b class="${mpl>=0?'up':'dn'}">${fm(mpl)}</b></span><span><b class="up">${gd}</b> green days</span><span><b class="dn">${rd}</b> red days</span>${best?`<span>Best ${md(best.d)} <b class="up">${fm(best.pl)}</b></span>`:''}${worst&&worst.pl<0?`<span>Worst ${md(worst.d)} <b class="dn">${fm(worst.pl)}</b></span>`:''}</div>
+  <div class="cal">${['S','M','T','W','T','F','S'].map(h=>`<div class="h">${h}</div>`).join('')}<div class="h">Total</div>${cells}</div>`;
+}
+
+function stats(){
+  const T=D.trades,done=T.filter(t=>t.settled).sort((a,b)=>a.settled<b.settled?-1:1);
+  const w=done.filter(t=>t.result==='win').length,pl=done.reduce((s,t)=>s+t.pl,0);
+  const be=done.length?done.reduce((s,t)=>s+t.cost/t.contracts,0)/done.length:0;
+  let streak=0,maxStreak=0,peak=D.start_bankroll,eq=D.start_bankroll,dd=0;const line=[[Date.parse(D.started),eq]];
+  for(const t of done){eq+=t.pl;line.push([Date.parse(t.settled),eq]);peak=Math.max(peak,eq);dd=Math.max(dd,peak-eq);if(t.result==='loss'){streak++;maxStreak=Math.max(maxStreak,streak)}else streak=0}
+  const worst=Math.min(0,...done.map(t=>t.pl));
+  const days=(Date.now()-Date.parse(D.started))/864e5;
+  const open=T.filter(t=>!t.settled);
+  return{done,w,pl,be,wr:done.length?w/done.length:0,maxStreak,dd,worst,line,days,open,equity:D.start_bankroll+pl};
+}
+function verdict(s){
+  const c=[
+    ['A full week of watching',s.days>=7,s.days.toFixed(1)+' of 7 days'],
+    ['At least 30 bets',s.done.length>=30,s.done.length+' bets'],
+    ['Win rate above break-even',s.done.length>0&&s.wr>s.be,s.done.length?(s.wr*100).toFixed(1)+'% vs '+(s.be*100).toFixed(1)+'%':'—'],
+    ['Made money overall',s.pl>0,sm(s.pl)],
+    ['Never fell more than $40 from its high',s.dd<=40,money(s.dd)+' max drop'],
+    ['No losing streak of 3+',s.maxStreak<3,s.maxStreak+' in a row max']];
+  const pass=c.every(x=>x[1]),early=s.days<7||s.done.length<30;
+  const head=early?'Still testing':pass?'Passed the week':'Didn’t pass';
+  const line=early?'Come back when the week and 30 bets are done. Results this early are mostly luck.':pass?'It cleared every check on paper. Real fills can be worse than pretend ones, so start real money small.':'At least one check failed. Don’t give it real money with these rules.';
+  return{c,head,line,pass,early};
+}
+function btHTML(){
+  const m=B.summary,sk=Object.entries(B.skips||{}).sort((a,b)=>b[1]-a[1]);
+  const good=m.bets>=30&&m.profit>0&&m.win_rate>m.break_even;
+  return `<section class="band" id="backtest"><div class="card" style="border:2px solid var(--${good?'up':'dn'})">
+  <h2>Backtest: last ${esc(B.days)} days</h2>
+  <p class="note">Replayed ${esc(B.windows)} real 15-minute windows with real Kalshi prices and your rules (${esc(local(B.from))} – ${esc(local(B.to))}).</p>
+  <div class="kv" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">
+    <div>$${esc(D?D.start_bankroll:150)} would be<b class="${m.profit>=0?'up':'dn'}">${money(m.end_bankroll)}</b></div>
+    <div>Bets<b>${m.bets} (${m.wins}W ${m.losses}L)</b></div>
+    <div>Win rate<b>${m.bets?(m.win_rate*100).toFixed(1)+'%':'—'}</b></div>
+    <div>Break-even<b>${m.bets?(m.break_even*100).toFixed(1)+'%':'—'}</b></div>
+    <div>Biggest drop<b class="dn">${money(m.max_drop)}</b></div>
+    <div>Worst bet<b class="dn">${money(m.worst)}</b></div>
+  </div>
+  <p style="margin:12px 0 0;font-weight:700">${m.bets<10?'Too few bets to judge: the rules almost never found an opening.':good?'The rules would have made money last week. Past weeks don’t guarantee the next one.':'The rules would not have made money last week.'}</p>
+  ${sk.length?`<p class="note" style="margin-top:8px">Windows by outcome: ${sk.map(([r,n])=>esc(r)+' '+n).join(' · ')}</p>`:''}
+  </div></section>`;
+}
+function render(){
+  const s=stats(),v=verdict(s),cfg=D.config||{};
+  const stale=D.last_run?(Date.now()-Date.parse(D.last_run))/6e4:999;
+  const reasons={};for(const r of Object.values(D.skips||{}))reasons[r]=(reasons[r]||0)+1;
+  const rs=Object.entries(reasons).sort((a,b)=>b[1]-a[1]),rmax=Math.max(1,...rs.map(r=>r[1]));
+  const watched=Object.keys(D.skips||{}).length;
+  $('#app').innerHTML=`
+<section class="band">
+  <h1>${s.done.length?`The bot is ${s.pl>=0?'up':'down'} ${money(Math.abs(s.pl))} on paper`:'The bot is watching, no settled bets yet'}</h1>
+  <p class="note">Pretend $${esc(D.start_bankroll)} account · started ${esc(local(D.started))} · <span class="pill ${String(D.status).startsWith('running')?'up':'dn'}">${esc(D.status)}</span> · last check ${esc(local(D.last_run))}${stale>30?' <b class="dn">(no check in '+Math.round(stale)+' min)</b>':''}</p>
+  <div class="grid">
+    <div>
+      <div class="slab">
+        <div style="font-size:13px;font-weight:600">Week verdict: ${esc(v.head)}</div>
+        <div class="big">${money(s.equity)}</div>
+        <div class="kv">
+          <div>Profit<b class="${s.pl>=0?'up':'dn'}">${sm(s.pl)}</b></div>
+          <div>Bets settled<b>${s.done.length}${s.open.length?' (+'+s.open.length+' open)':''}</b></div>
+          <div>Win rate<b>${s.done.length?(s.wr*100).toFixed(1)+'%':'—'}</b></div>
+          <div>Break-even rate<b>${s.done.length?(s.be*100).toFixed(1)+'%':'—'}</b></div>
+          <div>Worst loss<b class="dn">${money(s.worst)}</b></div>
+          <div>Windows watched<b>${watched}</b></div>
+        </div>
+        <p style="margin:12px 0 0;font-size:14px">${esc(v.line)}</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig"><svg id="eq" role="img" aria-label="Pretend bankroll over time"></svg></div>
+      <p class="note">Bankroll after each settled bet. Dashed line: the $${esc(D.start_bankroll)} start.</p>
+    </div>
+  </div>
+</section>
+${B?btHTML():''}
+<section class="band" id="calendar">${calHTML(s.done.map(t=>({d:new Date(t.settled),pl:t.pl,win:t.result==='win'})))}</section>
+<section class="band two">
+  <div class="card"><h2>Ready for real money?</h2>${v.c.map(x=>`<div class="chk"><span>${x[1]?'✓':'✗'} ${esc(x[0])}</span><span class="num ${x[1]?'up':'dn'}">${esc(x[2])}</span></div>`).join('')}</div>
+  <div><h2>Why it didn’t bet</h2>${rs.length?rs.map(([r,n])=>`<div class="rowb"><span>${esc(r)}</span><div class="bar"><i style="width:${n/rmax*100}%;${r==='bet'?'background:var(--up)':''}"></i></div><span class="num">${n}</span></div>`).join(''):'<p class="note">Nothing yet. It decides in the last '+esc(cfg.max_minutes_left)+' minutes of each window.</p>'}
+  <p class="note" style="margin-top:8px">One line per 15-minute window it reached the betting zone in.</p></div>
+</section>
+<section class="band">
+  <h2>Bets</h2>
+  ${D.trades.length?`<table class="stack"><thead><tr><th>Placed</th><th>Market</th><th>Side</th><th class="num">Price</th><th class="num">Contracts</th><th class="num">Real chance</th><th class="num">Mins left</th><th>Result</th></tr></thead><tbody>
+  ${[...D.trades].reverse().slice(0,60).map(t=>`<tr><td class="note">${esc(local(t.opened))}</td><td><b>${esc(NAME[t.series]||t.series)}</b> vs ${esc(t.strike)}</td><td>${t.side==='yes'?'Up':'Down'}</td><td class="num">${Math.round(t.price*100)}¢</td><td class="num">${esc(t.contracts)}</td><td class="num">${(t.p*100).toFixed(1)}%</td><td class="num">${esc(t.mins_left)}</td><td>${t.settled?`<span class="${t.pl>=0?'up':'dn'}">${t.result==='win'?'Won':'Lost'} ${sm(t.pl)}</span>`:'<span class="note">Open</span>'}</td></tr>`).join('')}
+  </tbody></table>`:'<p class="note">No bets yet.</p>'}
+</section>
+<section class="band">
+  <h2>Rules in use</h2>
+  <p class="note">Price ${Math.round((cfg.min_price||0)*100)}–${Math.round((cfg.max_price||0)*100)}¢ · ${esc(cfg.max_minutes_left)} min or less left · real chance must beat the price + fee · at least ${esc(cfg.min_safety_sigmas)}× a normal move from the target · skip if the last minute jumped ${esc(cfg.max_jump_sigmas)}×+ · max $${esc(cfg.max_bet)} a bet, one per window · stop for the day at −$${esc(cfg.daily_loss_limit)} · pause ${esc(cfg.pause_minutes)} min after ${esc(cfg.losing_streak_pause)} losses in a row · kill switch: ${cfg.enabled?'off':'ON'} · markets: ${esc((cfg.series||[]).map(x=>NAME[x]||x).join(', '))}. Dry run: no real orders. Edit config.json to change these.</p>
+  ${(D.errors||[]).length?`<p class="note" style="margin-top:8px">Last data hiccup: ${esc(local(D.errors[D.errors.length-1].t))} — ${esc(D.errors[D.errors.length-1].error)}</p>`:''}
+</section>`;
+  draw(s);
+}
+function draw(s){
+  const g=$('#eq');if(!g)return;const W=g.clientWidth,H=g.clientHeight;if(!W||!H)return;
+  const L=s.line.length>1?s.line:[[Date.parse(D.started),D.start_bankroll],[Date.now(),D.start_bankroll]];
+  const t0=L[0][0],t1=Math.max(Date.now(),L[L.length-1][0]),vs=L.map(p=>p[1]).concat(D.start_bankroll);
+  const mn=Math.min(...vs)-5,mx=Math.max(...vs)+5,pl=W<520?8:48,pr=10,pt=10,pb=24;
+  const X=t=>pl+(W-pl-pr)*(t-t0)/Math.max(1,t1-t0),Y=v=>pt+(H-pt-pb)*(1-(v-mn)/(mx-mn));
+  let d='';L.forEach((p,i)=>{d+=(i?`H${X(p[0]).toFixed(1)}V`:`M${X(p[0]).toFixed(1)},`)+Y(p[1]).toFixed(1)});d+=`H${X(t1).toFixed(1)}`;
+  const last=L[L.length-1][1];
+  const ticks=W<520?'':[mn+5,(mn+mx)/2,mx-5].map(v=>`<text x="${pl-6}" y="${Y(v)+4}" text-anchor="end" font-size="12" fill="currentColor" opacity=".6">$${Math.round(v)}</text>`).join('');
+  g.innerHTML=`<line x1="${pl}" x2="${W-pr}" y1="${Y(D.start_bankroll)}" y2="${Y(D.start_bankroll)}" stroke="currentColor" stroke-dasharray="5 5" opacity=".4"/><path d="${d}" fill="none" stroke="${last>=D.start_bankroll?'var(--up)':'var(--dn)'}" stroke-width="2.5"/>${ticks}<text x="${pl}" y="${H-6}" font-size="12" fill="currentColor" opacity=".6">${esc(local(D.started))}</text><text x="${W-pr}" y="${H-6}" font-size="12" fill="currentColor" opacity=".6" text-anchor="end">now</text>`;
+}
+const ro=new ResizeObserver(()=>{if(D)draw(stats())});
+async function load(){
+  try{const rb=await fetch('backtest.json?'+Date.now(),{cache:'no-store'});if(rb.ok)B=await rb.json()}catch(e){}
+  try{const r=await fetch('data.json?'+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;D=await r.json();D.trades=D.trades||[];render();const e=$('#eq');if(e){ro.disconnect();ro.observe(e)}}
+  catch(e){if(!D)$('#app').innerHTML='<section class="band"><h1>Dry-run bot</h1><p class="note">No live results yet. The first run saves data.json within about 10 minutes.</p></section>'+(B?btHTML():'')}
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cal]');if(b&&D){calOff+=+b.dataset.cal;render()}});
+load();setInterval(load,60000);
+}
+</script>
+</body>
+</html>
