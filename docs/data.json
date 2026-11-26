@@ -124,11 +124,13 @@
   "KXBTC15M-26NOV251245-45",
   "KXGOLD15M-26NOV251245-45",
   "KXBTC15M-26NOV252015-15",
-  "KXGOLD15M-26NOV252015-15"
+  "KXGOLD15M-26NOV252015-15",
+  "KXBTC15M-26NOV260300-00",
+  "KXGOLD15M-26NOV260300-00"
  ],
  "pause_until": null,
  "status": "running",
- "last_run": "2026-11-26T01:14:59Z",
+ "last_run": "2026-11-26T09:38:42Z",
  "errors": [],
  "config": {
   "enabled": true,
