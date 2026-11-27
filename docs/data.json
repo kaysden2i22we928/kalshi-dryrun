@@ -1,7 +1,7 @@
 {
  "started": "2026-11-25T06:15:40Z",
  "start_bankroll": 150,
- "bankroll": 75.54,
+ "bankroll": 161.54,
  "trades": [
   {
    "id": "KXBTC15M-26NOV250145-45-yes",
@@ -39,9 +39,9 @@
    "opened": "2026-11-27T11:10:02Z",
    "close_time": "2026-11-27T11:15:00Z",
    "mins_left": 4.96,
-   "settled": null,
-   "result": null,
-   "pl": 0.0
+   "settled": "2026-11-27T19:56:10Z",
+   "result": "win",
+   "pl": 9.68
   }
  ],
  "decisions": [
@@ -180,6 +180,23 @@
    "est": 3678.49,
    "action": "skip",
    "reason": "too close to target"
+  },
+  {
+   "t": "2026-11-27T19:59:41Z",
+   "series": "KXBTC15M",
+   "ticker": "KXBTC15M-26NOV271500-00",
+   "mins_left": 0.3,
+   "yes_ask": 0.001,
+   "no_ask": 1.0,
+   "side": "no",
+   "ask": 1.0,
+   "action": "skip",
+   "reason": "price above limit 99c"
+  },
+  {
+   "series": "KXGOLD15M",
+   "action": "skip",
+   "reason": "no open market"
   }
  ],
  "skips": {
@@ -192,7 +209,8 @@
   "KXBTC15M-26NOV262130-30": "price above limit 99c",
   "KXGOLD15M-26NOV262130-30": "no side at 75c+",
   "KXBTC15M-26NOV270615-15": "bet",
-  "KXGOLD15M-26NOV270615-15": "too close to target"
+  "KXGOLD15M-26NOV270615-15": "too close to target",
+  "KXBTC15M-26NOV271500-00": "price above limit 99c"
  },
  "windows_seen": [
   "KXBTC15M-26NOV250130-30",
@@ -216,11 +234,13 @@
   "KXBTC15M-26NOV262130-30",
   "KXGOLD15M-26NOV262130-30",
   "KXBTC15M-26NOV270615-15",
-  "KXGOLD15M-26NOV270615-15"
+  "KXGOLD15M-26NOV270615-15",
+  "KXBTC15M-26NOV271500-00",
+  "KXBTC15M-26NOV271515-15"
  ],
  "pause_until": null,
  "status": "running",
- "last_run": "2026-11-27T11:10:48Z",
+ "last_run": "2026-11-27T20:04:58Z",
  "errors": [],
  "config": {
   "enabled": true,
