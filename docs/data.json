@@ -1,7 +1,7 @@
 {
  "started": "2026-11-25T06:15:40Z",
  "start_bankroll": 150,
- "bankroll": 151.86,
+ "bankroll": 75.54,
  "trades": [
   {
    "id": "KXBTC15M-26NOV250145-45-yes",
@@ -22,6 +22,26 @@
    "settled": "2026-11-25T06:45:40Z",
    "result": "win",
    "pl": 1.86
+  },
+  {
+   "id": "KXBTC15M-26NOV270615-15-no",
+   "ticker": "KXBTC15M-26NOV270615-15",
+   "series": "KXBTC15M",
+   "side": "no",
+   "price": 0.88,
+   "contracts": 86,
+   "fee": 0.64,
+   "cost": 76.32,
+   "p": 0.9838,
+   "edge": 0.0964,
+   "safety": 2.14,
+   "strike": 61591.93,
+   "opened": "2026-11-27T11:10:02Z",
+   "close_time": "2026-11-27T11:15:00Z",
+   "mins_left": 4.96,
+   "settled": null,
+   "result": null,
+   "pl": 0.0
   }
  ],
  "decisions": [
@@ -124,6 +144,42 @@
    "no_ask": 0.4,
    "action": "skip",
    "reason": "no side at 75c+"
+  },
+  {
+   "t": "2026-11-27T11:10:02Z",
+   "series": "KXBTC15M",
+   "ticker": "KXBTC15M-26NOV270615-15",
+   "mins_left": 4.96,
+   "yes_ask": 0.13,
+   "no_ask": 0.88,
+   "side": "no",
+   "ask": 0.88,
+   "p": 0.9838,
+   "edge": 0.0964,
+   "safety": 2.14,
+   "jump": 0.75,
+   "strike": 61591.93,
+   "est": 61469.75,
+   "action": "bet",
+   "reason": "86 contracts, cost $76.32"
+  },
+  {
+   "t": "2026-11-27T11:10:48Z",
+   "series": "KXGOLD15M",
+   "ticker": "KXGOLD15M-26NOV270615-15",
+   "mins_left": 4.2,
+   "yes_ask": 0.079,
+   "no_ask": 0.922,
+   "side": "no",
+   "ask": 0.922,
+   "p": 0.6337,
+   "edge": -0.2935,
+   "safety": 0.34,
+   "jump": 0.72,
+   "strike": 3679.46,
+   "est": 3678.49,
+   "action": "skip",
+   "reason": "too close to target"
   }
  ],
  "skips": {
@@ -134,7 +190,9 @@
   "KXBTC15M-26NOV252015-15": "price above limit 99c",
   "KXGOLD15M-26NOV252015-15": "price above limit 99c",
   "KXBTC15M-26NOV262130-30": "price above limit 99c",
-  "KXGOLD15M-26NOV262130-30": "no side at 75c+"
+  "KXGOLD15M-26NOV262130-30": "no side at 75c+",
+  "KXBTC15M-26NOV270615-15": "bet",
+  "KXGOLD15M-26NOV270615-15": "too close to target"
  },
  "windows_seen": [
   "KXBTC15M-26NOV250130-30",
@@ -156,11 +214,13 @@
   "KXBTC15M-26NOV261430-30",
   "KXGOLD15M-26NOV261430-30",
   "KXBTC15M-26NOV262130-30",
-  "KXGOLD15M-26NOV262130-30"
+  "KXGOLD15M-26NOV262130-30",
+  "KXBTC15M-26NOV270615-15",
+  "KXGOLD15M-26NOV270615-15"
  ],
  "pause_until": null,
  "status": "running",
- "last_run": "2026-11-27T02:27:07Z",
+ "last_run": "2026-11-27T11:10:48Z",
  "errors": [],
  "config": {
   "enabled": true,
