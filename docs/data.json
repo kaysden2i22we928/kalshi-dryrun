@@ -102,6 +102,28 @@
    "ask": 1.0,
    "action": "skip",
    "reason": "price above limit 99c"
+  },
+  {
+   "t": "2026-11-27T02:27:07Z",
+   "series": "KXBTC15M",
+   "ticker": "KXBTC15M-26NOV262130-30",
+   "mins_left": 2.88,
+   "yes_ask": 0.998,
+   "no_ask": 0.003,
+   "side": "yes",
+   "ask": 0.998,
+   "action": "skip",
+   "reason": "price above limit 99c"
+  },
+  {
+   "t": "2026-11-27T02:27:07Z",
+   "series": "KXGOLD15M",
+   "ticker": "KXGOLD15M-26NOV262130-30",
+   "mins_left": 2.88,
+   "yes_ask": 0.61,
+   "no_ask": 0.4,
+   "action": "skip",
+   "reason": "no side at 75c+"
   }
  ],
  "skips": {
@@ -110,7 +132,9 @@
   "KXBTC15M-26NOV251230-30": "price above limit 99c",
   "KXGOLD15M-26NOV251230-30": "price above limit 99c",
   "KXBTC15M-26NOV252015-15": "price above limit 99c",
-  "KXGOLD15M-26NOV252015-15": "price above limit 99c"
+  "KXGOLD15M-26NOV252015-15": "price above limit 99c",
+  "KXBTC15M-26NOV262130-30": "price above limit 99c",
+  "KXGOLD15M-26NOV262130-30": "no side at 75c+"
  },
  "windows_seen": [
   "KXBTC15M-26NOV250130-30",
@@ -130,11 +154,13 @@
   "KXBTC15M-26NOV261415-15",
   "KXGOLD15M-26NOV261415-15",
   "KXBTC15M-26NOV261430-30",
-  "KXGOLD15M-26NOV261430-30"
+  "KXGOLD15M-26NOV261430-30",
+  "KXBTC15M-26NOV262130-30",
+  "KXGOLD15M-26NOV262130-30"
  ],
  "pause_until": null,
  "status": "running",
- "last_run": "2026-11-26T19:23:58Z",
+ "last_run": "2026-11-27T02:27:07Z",
  "errors": [],
  "config": {
   "enabled": true,
